@@ -1,0 +1,38 @@
+[
+{
+  "directory": "/Users/benkirk/Desktop/BackTester/build",
+  "command": "/usr/bin/c++  -I/opt/homebrew/include/eigen3 -std=gnu++17 -arch arm64 -o CMakeFiles/BackTester.dir/main.cpp.o -c /Users/benkirk/Desktop/BackTester/main.cpp",
+  "file": "/Users/benkirk/Desktop/BackTester/main.cpp",
+  "output": "CMakeFiles/BackTester.dir/main.cpp.o"
+},
+{
+  "directory": "/Users/benkirk/Desktop/BackTester/build",
+  "command": "/usr/bin/c++  -I/opt/homebrew/include/eigen3 -std=gnu++17 -arch arm64 -o CMakeFiles/BackTester.dir/DataLoader.cpp.o -c /Users/benkirk/Desktop/BackTester/DataLoader.cpp",
+  "file": "/Users/benkirk/Desktop/BackTester/DataLoader.cpp",
+  "output": "CMakeFiles/BackTester.dir/DataLoader.cpp.o"
+},
+{
+  "directory": "/Users/benkirk/Desktop/BackTester/build",
+  "command": "/usr/bin/c++  -I/opt/homebrew/include/eigen3 -std=gnu++17 -arch arm64 -o CMakeFiles/BackTester.dir/Strategy.cpp.o -c /Users/benkirk/Desktop/BackTester/Strategy.cpp",
+  "file": "/Users/benkirk/Desktop/BackTester/Strategy.cpp",
+  "output": "CMakeFiles/BackTester.dir/Strategy.cpp.o"
+},
+{
+  "directory": "/Users/benkirk/Desktop/BackTester/build",
+  "command": "/usr/bin/c++  -I/opt/homebrew/include/eigen3 -std=gnu++17 -arch arm64 -o CMakeFiles/BackTester.dir/Portfolio.cpp.o -c /Users/benkirk/Desktop/BackTester/Portfolio.cpp",
+  "file": "/Users/benkirk/Desktop/BackTester/Portfolio.cpp",
+  "output": "CMakeFiles/BackTester.dir/Portfolio.cpp.o"
+},
+{
+  "directory": "/Users/benkirk/Desktop/BackTester/build",
+  "command": "/usr/bin/c++  -I/opt/homebrew/include/eigen3 -std=gnu++17 -arch arm64 -o CMakeFiles/BackTester.dir/Menu.cpp.o -c /Users/benkirk/Desktop/BackTester/Menu.cpp",
+  "file": "/Users/benkirk/Desktop/BackTester/Menu.cpp",
+  "output": "CMakeFiles/BackTester.dir/Menu.cpp.o"
+},
+{
+  "directory": "/Users/benkirk/Desktop/BackTester/build",
+  "command": "/usr/bin/c++  -I/opt/homebrew/include/eigen3 -std=gnu++17 -arch arm64 -o CMakeFiles/BackTester.dir/Cointegration.cpp.o -c /Users/benkirk/Desktop/BackTester/Cointegration.cpp",
+  "file": "/Users/benkirk/Desktop/BackTester/Cointegration.cpp",
+  "output": "CMakeFiles/BackTester.dir/Cointegration.cpp.o"
+}
+]

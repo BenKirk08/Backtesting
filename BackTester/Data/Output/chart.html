@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backtest Results</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d14;
+    color: #d0d0d0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    padding: 28px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 28px;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-box {
+    background: #13131f;
+    border: 1px solid #1e1e30;
+    border-radius: 6px;
+    padding: 16px 18px;
+  }
+
+  .stat-box-label {
+    font-size: 0.72rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .stat-box-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .stat-box-value.green { color: #00e676; }
+  .stat-box-value.red { color: #ff4444; }
+
+  .section-card {
+    background: #13131f;
+    border: 1px solid #1e1e30;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .section-card-resizable {
+    background: #13131f;
+    border: 1px solid #1e1e30;
+    border-radius: 6px;
+    padding: 20px 24px 0 24px;
+    margin-bottom: 16px;
+    overflow: visible;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-top: 6px;
+  }
+
+  .controls-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .small-button {
+    background: #1e1e30;
+    border: 1px solid #2a2a40;
+    border-radius: 4px;
+    color: #aaa;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+
+  .small-button:hover { background: #2a2a40; color: #fff; }
+  .small-button.selected { background: #2a2a50; border-color: #4444aa; color: #fff; }
+
+  .label-and-input {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .label-and-input label {
+    font-size: 0.72rem;
+    color: #555;
+    white-space: nowrap;
+  }
+
+  input[type="date"],
+  input[type="number"] {
+    background: #1e1e30;
+    border: 1px solid #2a2a40;
+    border-radius: 4px;
+    color: #aaa;
+    padding: 5px 8px;
+    font-size: 0.75rem;
+    font-family: inherit;
+  }
+
+  input[type="date"] { width: 130px; }
+  input[type="number"] { width: 80px; }
+
+  input:focus {
+    outline: none;
+    border-color: #4444aa;
+    color: #fff;
+  }
+
+  .vertical-divider {
+    width: 1px;
+    height: 20px;
+    background: #2a2a40;
+    margin: 0 4px;
+  }
+
+  .chart-canvas-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .chart-canvas-container canvas {
+    display: block;
+    width: 100% !important;
+  }
+
+  .drag-resize-handle {
+    width: 100%;
+    height: 14px;
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .drag-resize-handle::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 3px;
+    border-radius: 2px;
+    background: #2a2a40;
+    transition: background 0.15s;
+  }
+
+  .drag-resize-handle:hover::before { background: #4444aa; }
+
+  .small-hint-text { font-size: 0.72rem; color: #333; margin: 6px 0 10px 0; }
+
+  .trades-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .trades-table th {
+    text-align: left;
+    padding: 10px 14px;
+    color: #555;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #1e1e30;
+    font-weight: 500;
+  }
+
+  .trades-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #181825;
+    color: #999;
+  }
+
+  .trades-table tr:hover td { background: #181825; color: #ccc; }
+  .trades-table tr.hidden-by-filter { display: none; }
+
+  .profit-text { color: #00e676; font-weight: 600; }
+  .loss-text { color: #ff4444; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>Backtest Results</h1>
+<div class="stats-row" id="statsRow"></div>
+
+<!-- portfolio value chart -->
+<div class="section-card-resizable" id="portfolioSection">
+  <div class="section-header">
+    <div class="section-title">Portfolio Value Over Time</div>
+    <div class="controls-row">
+      <button class="small-button" onclick="setDateRangePreset('1Y', this)">1Y</button>
+      <button class="small-button" onclick="setDateRangePreset('2Y', this)">2Y</button>
+      <button class="small-button" onclick="setDateRangePreset('5Y', this)">5Y</button>
+      <button class="small-button selected" id="buttonShowAll" onclick="setDateRangePreset('ALL', this)">ALL</button>
+      <div class="vertical-divider"></div>
+      <div class="label-and-input">
+        <label>From</label>
+        <input type="date" id="portfolioDateFrom" onchange="applyPortfolioDateRange()">
+      </div>
+      <div class="label-and-input">
+        <label>To</label>
+        <input type="date" id="portfolioDateTo" onchange="applyPortfolioDateRange()">
+      </div>
+      <div class="vertical-divider"></div>
+      <div class="label-and-input">
+        <label>Y Min</label>
+        <input type="number" id="portfolioYMin" placeholder="auto" onchange="applyPortfolioYScale()">
+      </div>
+      <div class="label-and-input">
+        <label>Y Max</label>
+        <input type="number" id="portfolioYMax" placeholder="auto" onchange="applyPortfolioYScale()">
+      </div>
+      <div class="vertical-divider"></div>
+      <button class="small-button" onclick="resetPortfolioChart()">Reset</button>
+    </div>
+  </div>
+  <div class="chart-canvas-container" id="portfolioChartContainer">
+    <canvas id="portfolioChartCanvas"></canvas>
+  </div>
+  <div class="small-hint-text">scroll to zoom, drag to pan</div>
+  <div class="drag-resize-handle" id="portfolioResizeHandle"></div>
+</div>
+
+<!-- profit and loss per trade chart -->
+<div class="section-card-resizable" id="profitLossSection">
+  <div class="section-header">
+    <div class="section-title">Profit and Loss Per Trade</div>
+    <div class="controls-row">
+      <div class="label-and-input">
+        <label>Y Min</label>
+        <input type="number" id="profitLossYMin" placeholder="auto" onchange="applyProfitLossYScale()">
+      </div>
+      <div class="label-and-input">
+        <label>Y Max</label>
+        <input type="number" id="profitLossYMax" placeholder="auto" onchange="applyProfitLossYScale()">
+      </div>
+      <button class="small-button" onclick="resetProfitLossChart()">Reset</button>
+    </div>
+  </div>
+  <div class="chart-canvas-container" id="profitLossChartContainer">
+    <canvas id="profitLossChartCanvas"></canvas>
+  </div>
+  <div class="drag-resize-handle" id="profitLossResizeHandle"></div>
+</div>
+
+<!-- trade log table -->
+<div class="section-card">
+  <div class="section-header">
+    <div class="section-title">Trade Log</div>
+    <div class="controls-row">
+      <div class="label-and-input">
+        <label>From</label>
+        <input type="date" id="tradeLogDateFrom" onchange="filterTradeLogByDate()">
+      </div>
+      <div class="label-and-input">
+        <label>To</label>
+        <input type="date" id="tradeLogDateTo" onchange="filterTradeLogByDate()">
+      </div>
+      <button class="small-button" onclick="resetTradeLogFilter()">Show All</button>
+    </div>
+  </div>
+  <table class="trades-table">
+    <thead>
+      <tr>
+        <th>Number</th>
+        <th>Buy Date</th>
+        <th>Buy Price</th>
+        <th>Sell Date</th>
+        <th>Sell Price</th>
+        <th>Profit or Loss</th>
+        <th>Return Percent</th>
+      </tr>
+    </thead>
+    <tbody id="tradeLogTableBody"></tbody>
+  </table>
+</div>
+
+<script>
+let portfolioChart, profitLossChart;
+let allDates = [], allPortfolioValues = [], allTrades = [];
+
+//makes the chart resize when you drag the handle
+function makeChartResizable(resizeHandleId, chartContainerId, getChart, minimumHeight) {
+  const resizeHandle = document.getElementById(resizeHandleId);
+  const chartContainer = document.getElementById(chartContainerId);
+  let mouseStartY, containerStartHeight;
+
+  resizeHandle.addEventListener('mousedown', function(mousedownEvent) {
+    mouseStartY = mousedownEvent.clientY;
+    containerStartHeight = chartContainer.offsetHeight;
+    document.body.style.cursor = 'ns-resize';
+    document.body.style.userSelect = 'none';
+
+    function onMouseMove(mousemoveEvent) {
+      const newHeight = Math.max(minimumHeight, containerStartHeight + (mousemoveEvent.clientY - mouseStartY));
+      chartContainer.style.height = newHeight + 'px';
+      getChart().resize();
+    }
+
+    function onMouseUp() {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+}
+
+//sets y axis min and max on the portfolio chart
+function applyPortfolioYScale() {
+  const minValue = document.getElementById('portfolioYMin').value;
+  const maxValue = document.getElementById('portfolioYMax').value;
+  portfolioChart.options.scales.y.min = minValue !== '' ? +minValue : undefined;
+  portfolioChart.options.scales.y.max = maxValue !== '' ? +maxValue : undefined;
+  portfolioChart.update();
+}
+
+//sets the y axis min and max on the profit loss chart
+function applyProfitLossYScale() {
+  const minValue = document.getElementById('profitLossYMin').value;
+  const maxValue = document.getElementById('profitLossYMax').value;
+  profitLossChart.options.scales.y.min = minValue !== '' ? +minValue : undefined;
+  profitLossChart.options.scales.y.max = maxValue !== '' ? +maxValue : undefined;
+  profitLossChart.update();
+}
+
+//zooms the portfolio chart to a date range typed in the inputs
+function applyPortfolioDateRange() {
+  const fromDate = document.getElementById('portfolioDateFrom').value;
+  const toDate = document.getElementById('portfolioDateTo').value;
+  if (!fromDate || !toDate) return;
+  const startIndex = allDates.findIndex(function(date) { return date >= fromDate; });
+  const endIndex = allDates.length - 1 - [...allDates].reverse().findIndex(function(date) { return date <= toDate; });
+  if (startIndex === -1 || endIndex < 0) return;
+  removeActiveFromAllButtons();
+  portfolioChart.zoomScale('x', { min: startIndex, max: endIndex });
+}
+
+//removes the selected style from all preset buttons
+function removeActiveFromAllButtons() {
+  document.querySelectorAll('.small-button').forEach(function(button) { button.classList.remove('selected'); });
+}
+
+//zooms to a preset date range like 1 year or 2 years
+function setDateRangePreset(preset, buttonClicked) {
+  removeActiveFromAllButtons();
+  if (buttonClicked) buttonClicked.classList.add('selected');
+  if (preset === 'ALL') { portfolioChart.resetZoom(); return; }
+  const lastDate = new Date(allDates[allDates.length - 1]);
+  const startDate = new Date(lastDate);
+  if (preset === '1Y') startDate.setFullYear(startDate.getFullYear() - 1);
+  if (preset === '2Y') startDate.setFullYear(startDate.getFullYear() - 2);
+  if (preset === '5Y') startDate.setFullYear(startDate.getFullYear() - 5);
+  const startIndex = allDates.findIndex(function(date) { return date >= startDate.toISOString().slice(0, 10); });
+  if (startIndex !== -1) portfolioChart.zoomScale('x', { min: startIndex, max: allDates.length - 1 });
+}
+
+//resets portfolio chart zoom and y scale back to default
+function resetPortfolioChart() {
+  removeActiveFromAllButtons();
+  document.getElementById('buttonShowAll').classList.add('selected');
+  document.getElementById('portfolioYMin').value = '';
+  document.getElementById('portfolioYMax').value = '';
+  portfolioChart.options.scales.y.min = undefined;
+  portfolioChart.options.scales.y.max = undefined;
+  portfolioChart.resetZoom();
+}
+
+//resets profit loss chart y scale back to default
+function resetProfitLossChart() {
+  document.getElementById('profitLossYMin').value = '';
+  document.getElementById('profitLossYMax').value = '';
+  profitLossChart.options.scales.y.min = undefined;
+  profitLossChart.options.scales.y.max = undefined;
+  profitLossChart.update();
+}
+
+//hides trade log rows outside the selected date range
+function filterTradeLogByDate() {
+  const fromDate = document.getElementById('tradeLogDateFrom').value;
+  const toDate = document.getElementById('tradeLogDateTo').value;
+  document.querySelectorAll('#tradeLogTableBody tr').forEach(function(row) {
+    const rowBuyDate = row.dataset.buy;
+    const rowSellDate = row.dataset.sell;
+    const shouldShow = (!fromDate || rowBuyDate >= fromDate) && (!toDate || rowSellDate <= toDate);
+    row.classList.toggle('hidden-by-filter', !shouldShow);
+  });
+}
+
+//shows all trades in the trade log again
+function resetTradeLogFilter() {
+  document.getElementById('tradeLogDateFrom').value = '';
+  document.getElementById('tradeLogDateTo').value = '';
+  document.querySelectorAll('#tradeLogTableBody tr').forEach(function(row) { row.classList.remove('hidden-by-filter'); });
+}
+
+//loads the json data and builds everything
+fetch('results.json')
+  .then(function(response) { return response.json(); })
+  .then(function(data) {
+    const portfolioValueHistory = data.portfolioValue;
+    allTrades = data.trades;
+    allDates = portfolioValueHistory.map(function(entry) { return entry.date; });
+    allPortfolioValues = portfolioValueHistory.map(function(entry) { return entry.value; });
+
+    document.getElementById('portfolioDateFrom').value = allDates[0];
+    document.getElementById('portfolioDateTo').value = allDates[allDates.length - 1];
+
+    const startingCapital = data.startingMoney;
+    const finalPortfolioValue = allPortfolioValues[allPortfolioValues.length - 1];
+    const totalReturnPercent = ((finalPortfolioValue - startingCapital) / startingCapital * 100).toFixed(1);
+    const numberOfWinningTrades = allTrades.filter(function(trade) { return trade.profitLoss > 0; }).length;
+    const winRatePercent = (numberOfWinningTrades / allTrades.length * 100).toFixed(0);
+    const totalProfitOrLoss = finalPortfolioValue - startingCapital;
+
+    let highestValueSoFar = startingCapital;
+    let biggestDrawdownPercent = 0;
+    allPortfolioValues.forEach(function(value) {
+      if (value > highestValueSoFar) highestValueSoFar = value;
+      const drawdown = (highestValueSoFar - value) / highestValueSoFar * 100;
+      if (drawdown > biggestDrawdownPercent) biggestDrawdownPercent = drawdown;
+    });
+
+    //build the stat boxes at the top
+    document.getElementById('statsRow').innerHTML = [
+      { label: 'Starting Capital', value: '$' + startingCapital.toLocaleString('en'), colorClass: '' },
+      { label: 'Final Value', value: '$' + finalPortfolioValue.toLocaleString('en', { maximumFractionDigits: 0 }), colorClass: '' },
+      { label: 'Total Return', value: totalReturnPercent + '%', colorClass: totalReturnPercent > 0 ? 'green' : 'red' },
+      { label: 'Total Profit or Loss', value: '$' + totalProfitOrLoss.toLocaleString('en', { maximumFractionDigits: 0 }), colorClass: totalProfitOrLoss > 0 ? 'green' : 'red' },
+      { label: 'Win Rate', value: winRatePercent + '%', colorClass: winRatePercent >= 50 ? 'green' : 'red' },
+      { label: 'Max Drawdown', value: '-' + biggestDrawdownPercent.toFixed(1) + '%', colorClass: 'red' },
+    ].map(function(statItem) {
+      return '<div class="stat-box"><div class="stat-box-label">' + statItem.label + '</div><div class="stat-box-value ' + statItem.colorClass + '">' + statItem.value + '</div></div>';
+    }).join('');
+
+    //build the portfolio value chart
+    const portfolioChartContainer = document.getElementById('portfolioChartContainer');
+    portfolioChartContainer.style.height = '260px';
+
+    portfolioChart = new Chart(document.getElementById('portfolioChartCanvas'), {
+      type: 'line',
+      data: {
+        labels: allDates,
+        datasets: [{
+          data: allPortfolioValues,
+          borderWidth: 1.5,
+          pointRadius: 0,
+          tension: 0,
+          segment: {
+            borderColor: function(context) {
+              return context.p1.parsed.y >= context.p0.parsed.y ? '#00e676' : '#ff4444';
+            }
+          },
+          fill: false,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) { return ' $' + context.parsed.y.toLocaleString('en', { maximumFractionDigits: 0 }); }
+            }
+          },
+          zoom: {
+            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' },
+            pan: { enabled: true, mode: 'x' }
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#444', maxTicksLimit: 10, font: { size: 11 } }, grid: { color: '#191926' } },
+          y: { ticks: { color: '#444', font: { size: 11 }, callback: function(value) { return '$' + (value / 1000).toFixed(0) + 'k'; } }, grid: { color: '#191926' } }
+        }
+      }
+    });
+
+    makeChartResizable('portfolioResizeHandle', 'portfolioChartContainer', function() { return portfolioChart; }, 100);
+
+    //build the profit loss bar chart
+    const profitLossChartContainer = document.getElementById('profitLossChartContainer');
+    profitLossChartContainer.style.height = '200px';
+
+    profitLossChart = new Chart(document.getElementById('profitLossChartCanvas'), {
+      type: 'bar',
+      data: {
+        labels: allTrades.map(function(trade, index) { return '#' + (index + 1); }),
+        datasets: [{
+          data: allTrades.map(function(trade) { return trade.profitLoss; }),
+          backgroundColor: allTrades.map(function(trade) { return trade.profitLoss >= 0 ? '#00e67640' : '#ff444440'; }),
+          borderColor: allTrades.map(function(trade) { return trade.profitLoss >= 0 ? '#00e676' : '#ff4444'; }),
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: function(items) {
+                const tradeIndex = items[0].dataIndex;
+                return 'trade ' + (tradeIndex + 1) + ': ' + allTrades[tradeIndex].buyDate + ' to ' + allTrades[tradeIndex].sellDate;
+              },
+              label: function(context) { return ' profit or loss: $' + context.parsed.y.toFixed(0); }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#444', font: { size: 10 } }, grid: { color: '#191926' } },
+          y: { ticks: { color: '#444', font: { size: 11 }, callback: function(value) { return '$' + value.toFixed(0); } }, grid: { color: '#191926' } }
+        }
+      }
+    });
+
+    makeChartResizable('profitLossResizeHandle', 'profitLossChartContainer', function() { return profitLossChart; }, 100);
+
+    //build the trade log table rows
+    document.getElementById('tradeLogTableBody').innerHTML = allTrades.map(function(trade, index) {
+      const returnPercent = ((trade.sellPrice - trade.buyPrice) / trade.buyPrice * 100).toFixed(1);
+      const textColorClass = trade.profitLoss >= 0 ? 'profit-text' : 'loss-text';
+      return '<tr data-buy="' + trade.buyDate + '" data-sell="' + trade.sellDate + '">'
+        + '<td>' + (index + 1) + '</td>'
+        + '<td>' + trade.buyDate + '</td>'
+        + '<td>$' + trade.buyPrice.toFixed(2) + '</td>'
+        + '<td>' + trade.sellDate + '</td>'
+        + '<td>$' + trade.sellPrice.toFixed(2) + '</td>'
+        + '<td class="' + textColorClass + '">$' + trade.profitLoss.toFixed(0) + '</td>'
+        + '<td class="' + textColorClass + '">' + (returnPercent > 0 ? '+' : '') + returnPercent + '%</td>'
+        + '</tr>';
+    }).join('');
+  })
+  .catch(function(error) {
+    document.body.innerHTML += '<p style="color:#ff4444;margin-top:20px">error loading results.json: ' + error + '</p>';
+  });
+</script>
+</body>
+</html>
