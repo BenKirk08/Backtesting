@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/benkirk/Desktop/BackTester/Cointegration.cpp" "CMakeFiles/BackTester.dir/Cointegration.cpp.o" "gcc" "CMakeFiles/BackTester.dir/Cointegration.cpp.o.d"
   "/Users/benkirk/Desktop/BackTester/DataLoader.cpp" "CMakeFiles/BackTester.dir/DataLoader.cpp.o" "gcc" "CMakeFiles/BackTester.dir/DataLoader.cpp.o.d"
+  "/Users/benkirk/Desktop/BackTester/Kalman.cpp" "CMakeFiles/BackTester.dir/Kalman.cpp.o" "gcc" "CMakeFiles/BackTester.dir/Kalman.cpp.o.d"
   "/Users/benkirk/Desktop/BackTester/Menu.cpp" "CMakeFiles/BackTester.dir/Menu.cpp.o" "gcc" "CMakeFiles/BackTester.dir/Menu.cpp.o.d"
   "/Users/benkirk/Desktop/BackTester/Portfolio.cpp" "CMakeFiles/BackTester.dir/Portfolio.cpp.o" "gcc" "CMakeFiles/BackTester.dir/Portfolio.cpp.o.d"
   "/Users/benkirk/Desktop/BackTester/Strategy.cpp" "CMakeFiles/BackTester.dir/Strategy.cpp.o" "gcc" "CMakeFiles/BackTester.dir/Strategy.cpp.o.d"

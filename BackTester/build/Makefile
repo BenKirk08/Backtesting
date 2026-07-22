@@ -177,6 +177,30 @@ DataLoader.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/BackTester.dir/build.make CMakeFiles/BackTester.dir/DataLoader.cpp.s
 .PHONY : DataLoader.cpp.s
 
+Kalman.o: Kalman.cpp.o
+.PHONY : Kalman.o
+
+# target to build an object file
+Kalman.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BackTester.dir/build.make CMakeFiles/BackTester.dir/Kalman.cpp.o
+.PHONY : Kalman.cpp.o
+
+Kalman.i: Kalman.cpp.i
+.PHONY : Kalman.i
+
+# target to preprocess a source file
+Kalman.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BackTester.dir/build.make CMakeFiles/BackTester.dir/Kalman.cpp.i
+.PHONY : Kalman.cpp.i
+
+Kalman.s: Kalman.cpp.s
+.PHONY : Kalman.s
+
+# target to generate assembly for a file
+Kalman.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BackTester.dir/build.make CMakeFiles/BackTester.dir/Kalman.cpp.s
+.PHONY : Kalman.cpp.s
+
 Menu.o: Menu.cpp.o
 .PHONY : Menu.o
 
@@ -288,6 +312,9 @@ help:
 	@echo "... DataLoader.o"
 	@echo "... DataLoader.i"
 	@echo "... DataLoader.s"
+	@echo "... Kalman.o"
+	@echo "... Kalman.i"
+	@echo "... Kalman.s"
 	@echo "... Menu.o"
 	@echo "... Menu.i"
 	@echo "... Menu.s"

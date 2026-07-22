@@ -1,5 +1,6 @@
 #include "DataLoader.h"
 #include "Cointegration.h"
+#include "Kalman.h"
 #include "Portfolio.h"
 #include "Strategy.h"
 #include "Menu.h"
@@ -16,13 +17,19 @@ const std::string COLA_3 = "Data/Input/cola_Data.csv";
 const std::string PEPSI_3 = "Data/Input/pepsi_Data.csv";
 
 int main() {
-    //load all bars from csv file
+    std::cout << "------------Bens Backtesting Model---------------\n";
+    //load data
     std::vector<Bar> barsA = loadCSV(CUK_1);
     std::vector<Bar> barsB = loadCSV(CCL_1);
     std::vector<AlignedBar> alignedBars = alignBars(barsA, barsB);
     
+    //Johansen Cointegration Test
     JohansenResult CoInResult = johansenTest(alignedBars);
-    std::cout << (CoInResult.isCointegrated? "IS cointegrated at 5%\n" : "is NOT cointegrated at 5%\n");
+    std::cout << (CoInResult.isCointegrated? "IS cointegrated at 5%\n\n" : "is NOT cointegrated at 5%\n\n");
+
+    //Kalman Filtering
+    KalmanOutput ko = runKalman(alignedBars, 1e-6, 1e-4);
+    outputKalmanResults(ko);
 
     // //generate signals with 10 day fast and 50 day slow MA
     // std::vector<Signal> signals = movingAverageCrossover(bars, 10, 50);
@@ -48,7 +55,3 @@ int main() {
 
     return 0;
 }
-
-
-
-

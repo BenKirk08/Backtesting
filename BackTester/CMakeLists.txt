@@ -12,6 +12,7 @@ add_executable(BackTester
     Portfolio.cpp
     Menu.cpp
     Cointegration.cpp
+    Kalman.cpp
 )
 
 target_include_directories(BackTester PRIVATE /opt/homebrew/include/eigen3)
