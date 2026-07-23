@@ -40,5 +40,11 @@
   "command": "/usr/bin/c++  -I/opt/homebrew/include/eigen3 -std=gnu++17 -arch arm64 -o CMakeFiles/BackTester.dir/Kalman.cpp.o -c /Users/benkirk/Desktop/BackTester/Kalman.cpp",
   "file": "/Users/benkirk/Desktop/BackTester/Kalman.cpp",
   "output": "CMakeFiles/BackTester.dir/Kalman.cpp.o"
+},
+{
+  "directory": "/Users/benkirk/Desktop/BackTester/build",
+  "command": "/usr/bin/c++  -I/opt/homebrew/include/eigen3 -std=gnu++17 -arch arm64 -o CMakeFiles/BackTester.dir/Signals.cpp.o -c /Users/benkirk/Desktop/BackTester/Signals.cpp",
+  "file": "/Users/benkirk/Desktop/BackTester/Signals.cpp",
+  "output": "CMakeFiles/BackTester.dir/Signals.cpp.o"
 }
 ]

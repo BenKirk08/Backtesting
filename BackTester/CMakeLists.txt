@@ -13,6 +13,7 @@ add_executable(BackTester
     Menu.cpp
     Cointegration.cpp
     Kalman.cpp
+    Signals.cpp
 )
 
 target_include_directories(BackTester PRIVATE /opt/homebrew/include/eigen3)

@@ -249,6 +249,30 @@ Portfolio.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/BackTester.dir/build.make CMakeFiles/BackTester.dir/Portfolio.cpp.s
 .PHONY : Portfolio.cpp.s
 
+Signals.o: Signals.cpp.o
+.PHONY : Signals.o
+
+# target to build an object file
+Signals.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BackTester.dir/build.make CMakeFiles/BackTester.dir/Signals.cpp.o
+.PHONY : Signals.cpp.o
+
+Signals.i: Signals.cpp.i
+.PHONY : Signals.i
+
+# target to preprocess a source file
+Signals.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BackTester.dir/build.make CMakeFiles/BackTester.dir/Signals.cpp.i
+.PHONY : Signals.cpp.i
+
+Signals.s: Signals.cpp.s
+.PHONY : Signals.s
+
+# target to generate assembly for a file
+Signals.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BackTester.dir/build.make CMakeFiles/BackTester.dir/Signals.cpp.s
+.PHONY : Signals.cpp.s
+
 Strategy.o: Strategy.cpp.o
 .PHONY : Strategy.o
 
@@ -321,6 +345,9 @@ help:
 	@echo "... Portfolio.o"
 	@echo "... Portfolio.i"
 	@echo "... Portfolio.s"
+	@echo "... Signals.o"
+	@echo "... Signals.i"
+	@echo "... Signals.s"
 	@echo "... Strategy.o"
 	@echo "... Strategy.i"
 	@echo "... Strategy.s"

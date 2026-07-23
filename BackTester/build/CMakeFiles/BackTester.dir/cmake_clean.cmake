@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/BackTester.dir/Menu.cpp.o.d"
   "CMakeFiles/BackTester.dir/Portfolio.cpp.o"
   "CMakeFiles/BackTester.dir/Portfolio.cpp.o.d"
+  "CMakeFiles/BackTester.dir/Signals.cpp.o"
+  "CMakeFiles/BackTester.dir/Signals.cpp.o.d"
   "CMakeFiles/BackTester.dir/Strategy.cpp.o"
   "CMakeFiles/BackTester.dir/Strategy.cpp.o.d"
   "CMakeFiles/BackTester.dir/main.cpp.o"

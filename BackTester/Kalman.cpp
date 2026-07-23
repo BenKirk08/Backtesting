@@ -56,6 +56,9 @@ void outputKalmanResults(KalmanOutput ko) {
     for (size_t i = 0; i < ko.beta.size(); i += 250)
         std::cout << ko.dates[i] << "  beta = " << ko.beta[i] << "  spread = " << ko.spread[i] << "\n";
     double bmin = 1e9, bmax = -1e9;
-    for (double b : ko.beta) { if (b < bmin) bmin = b; if (b > bmax) bmax = b; }
-    std::cout << "beta range: [" << bmin << ", " << bmax << "]\n";
+    for (double b : ko.beta) { 
+        if (b < bmin) bmin = b; 
+        if (b > bmax) bmax = b; 
+    }
+    std::cout << "beta range: [" << bmin << ", " << bmax << "]\n\n";
 }

@@ -1,6 +1,7 @@
 #include "DataLoader.h"
 #include "Cointegration.h"
 #include "Kalman.h"
+#include "Signals.h"
 #include "Portfolio.h"
 #include "Strategy.h"
 #include "Menu.h"
@@ -8,28 +9,37 @@
 #include <vector>
 #include <iostream>
 
-//3 different Relationships 1. cointegrated, 2. borderline cointegrated (reject), 3. Not cointegreated
+//3 different Relationships 1. cointegrated but collapsed in december 
+//                          2. borderline cointegrated (reject)
+//                          3. Not cointegreated
 const std::string CUK_1 = "Data/Input/cuk_Data.csv";
 const std::string CCL_1 = "Data/Input/ccl_Data.csv";
 const std::string XOM_2 = "Data/Input/xom_Data.csv";
 const std::string CVX_2 = "Data/Input/cvx_Data.csv";
 const std::string COLA_3 = "Data/Input/cola_Data.csv";
 const std::string PEPSI_3 = "Data/Input/pepsi_Data.csv";
+const std::string V_4 = "Data/Input/v_Data.csv";
+const std::string MA_4 = "Data/Input/ma_Data.csv";
 
 int main() {
     std::cout << "------------Bens Backtesting Model---------------\n";
     //load data
-    std::vector<Bar> barsA = loadCSV(CUK_1);
-    std::vector<Bar> barsB = loadCSV(CCL_1);
+    std::vector<Bar> barsA = loadCSV(V_4);
+    std::vector<Bar> barsB = loadCSV(MA_4);
     std::vector<AlignedBar> alignedBars = alignBars(barsA, barsB);
     
     //Johansen Cointegration Test
     JohansenResult CoInResult = johansenTest(alignedBars);
-    std::cout << (CoInResult.isCointegrated? "IS cointegrated at 5%\n\n" : "is NOT cointegrated at 5%\n\n");
+    std::cout << (CoInResult.isCointegrated? "IS cointegrated at 5%" : "is NOT cointegrated at 5%");
+    std::cout << ", Trace1 = " << CoInResult.trace0 << " & Threshold = 15.4943\n\n";
 
     //Kalman Filtering
     KalmanOutput ko = runKalman(alignedBars, 1e-6, 1e-4);
     outputKalmanResults(ko);
+
+    //Z-scores
+    std::vector<double> z = rollingZScore(ko.spread, 60);
+    outputZScoreResults(z, ko);
 
     // //generate signals with 10 day fast and 50 day slow MA
     // std::vector<Signal> signals = movingAverageCrossover(bars, 10, 50);
